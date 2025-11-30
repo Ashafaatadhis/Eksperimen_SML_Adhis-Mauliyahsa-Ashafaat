@@ -1,0 +1,42 @@
+name: Preprocess Dataset CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+    env:
+      MLFLOW_TRACKING_URI: file://${{ github.workspace }}/mlruns_ci
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.12.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run preprocessing and log artifact locally
+        run: |
+          cd preprocessing
+          python automate_Adhis_Mauliyahsa_Ashafaat.py
+
+      - name: Upload processed dataset artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stroke_processed_dataset
+          path: preprocessing/healthcare-dataset-stroke-data_preprocessing.csv
+
+      - name: Upload MLflow Tracking Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlflow_runs
+          path: mlruns_ci

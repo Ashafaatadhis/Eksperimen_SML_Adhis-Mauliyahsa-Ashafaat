@@ -1,0 +1,7 @@
+pandas
+numpy
+mlflow==2.19.0
+scikit-learn   
+dotenv
+xgboost
+imblearn
